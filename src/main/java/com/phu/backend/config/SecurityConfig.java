@@ -36,7 +36,7 @@ import java.util.List;
 public class SecurityConfig {
     private static final String LOCALHOST = "http://localhost:5173";
 
-    private static final String WEB = "https://fitee.site";
+    private static final String WEB = "https://fitee-site.vercel.app";
 
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JWTUtil jwtUtil;

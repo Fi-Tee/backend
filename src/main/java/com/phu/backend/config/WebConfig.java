@@ -9,12 +9,13 @@ public class WebConfig implements WebMvcConfigurer {
 
     private static final String LOCALHOST = "http://localhost:5173";
 
-    private static final String WEB = "https://fitee.site";
+    private static final String WEB = "https://fitee-site.vercel.app";
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins(LOCALHOST, WEB)
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowCredentials(true);
     }
 }

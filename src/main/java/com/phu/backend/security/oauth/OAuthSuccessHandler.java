@@ -50,8 +50,10 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         if (role.equals("ROLE_BEFORE_USER")) {
             // 클라이언트에게 유효기간 10분인 엑세스토큰 발급
             String access = jwtUtil.createJwt("access", email, role);
-            response.setHeader("Authorization", "Bearer " + access);
-            response.sendRedirect("http://localhost:5173/social/sign-up");
+            String redirectUrl = "https://fitee-site.vercel.app/social/sign-up?access_token=" + access;
+            ResponseCookie accessCookie = createAccessCookie("access_token", access);
+            response.setHeader("Set-Cookie", accessCookie.toString());
+            getRedirectStrategy().sendRedirect(request,response,redirectUrl);
         }
         // 소셜 로그인 진행 및 jwt 발급
         if (role.equals("ROLE_USER")) {
@@ -68,7 +70,7 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
             ResponseCookie refreshCookie = createRefreshCookie("refresh", refresh);
             response.setHeader("Set-Cookie", refreshCookie.toString());
             response.setHeader("Authorization", "Bearer " + access);
-            response.sendRedirect("http://localhost:5173/");
+            response.sendRedirect("https://fitee-site.vercel.app");
             log.info("token:{}", access);
         }
     }
@@ -78,11 +80,22 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
                 .maxAge(24 * 60 * 60)
                 .secure(true)
                 .httpOnly(true)
-                .domain("fitee.site")
+                .domain("fitee-site.vercel.app")
                 .path("/")
                 .sameSite("None")
                 .build();
-
         return cookie;
     }
+
+    private ResponseCookie createAccessCookie(String key, String value) {
+        return ResponseCookie.from(key, value)
+                .maxAge(10 * 60) // 10분
+                .secure(true)
+                .httpOnly(true)
+                .domain("fitee-site.vercel.app")
+                .path("/")
+                .sameSite("None")
+                .build();
+    }
+
 }
